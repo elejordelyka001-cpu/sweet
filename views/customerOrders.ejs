@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SweetBake - My Orders</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+  <div class="sidebar sidebar-customer">
+    <div class="sidebar-brand">
+      🎂 SweetBake
+    </div>
+    <ul class="sidebar-menu">
+      <li class="sidebar-item">
+        <a href="/customer/dashboard" class="sidebar-link">Home</a>
+      </li>
+      <li class="sidebar-item">
+        <a href="/customer/orders" class="sidebar-link active">My Orders</a>
+      </li>
+      <li class="sidebar-item">
+          <a href="/customer/checkout" class="sidebar-link">Checkout</a>
+        </li>
+        <li class="sidebar-item">
+          <a href="/logout" class="sidebar-link">Logout</a>
+        </li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <h1 class="cake-emoji">My Orders</h1>
+    <div class="card">
+      <div class="card-body">
+        <table class="table">
+          <thead class="table-primary">
+            <tr>
+              <th>Order ID</th>
+              <th>Total Amount</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% orders.forEach(order => { %>
+              <tr>
+                <td><%= order.id %></td>
+                <td>₱<%= order.total_amount %></td>
+                <td><%= order.status %></td>
+                <td><a href="/orders/<%= order.id %>" class="btn btn-sm btn-info">View</a></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

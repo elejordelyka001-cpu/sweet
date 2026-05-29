@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SweetBake - Order <%= order.id %></title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+  <% if (user.role === 'admin') { %>
+  <div class="sidebar sidebar-admin">
+      <div class="sidebar-brand">
+        🎂 SweetBake Admin
+      </div>
+      <ul class="sidebar-menu">
+        <li class="sidebar-item">
+          <a href="/admin/dashboard" class="sidebar-link">Dashboard</a>
+        </li>
+        <li class="sidebar-item">
+          <a href="/admin/products" class="sidebar-link">Products</a>
+        </li>
+        <li class="sidebar-item">
+          <a href="/admin/orders" class="sidebar-link">Orders</a>
+        </li>
+        <li class="sidebar-item">
+          <a href="/admin/inventory" class="sidebar-link">Inventory</a>
+        </li>
+        <li class="sidebar-item">
+          <a href="/admin/payments" class="sidebar-link">Payments</a>
+        </li>
+        <li class="sidebar-item">
+          <a href="/admin/reports" class="sidebar-link">Reports</a>
+        </li>
+        <li class="sidebar-item">
+          <a href="/logout" class="sidebar-link">Logout</a>
+        </li>
+      </ul>
+    </div>
+  <% } else if (user.role === 'staff') { %>
+  <div class="sidebar sidebar-staff">
+      <div class="sidebar-brand">
+        🍰 SweetBake Staff
+      </div>
+      <ul class="sidebar-menu">
+        <li class="sidebar-item">
+          <a href="/staff/dashboard" class="sidebar-link">Dashboard</a>
+        </li>
+        <li class="sidebar-item">
+          <a href="/staff/orders" class="sidebar-link">Orders</a>
+        </li>
+        <li class="sidebar-item">
+          <a href="/staff/inventory" class="sidebar-link">Inventory</a>
+        </li>
+        <li class="sidebar-item">
+          <a href="/staff/payments" class="sidebar-link">Payments</a>
+        </li>
+        <li class="sidebar-item">
+          <a href="/logout" class="sidebar-link">Logout</a>
+        </li>
+      </ul>
+    </div>
+  <% } else if (user.role === 'customer') { %>
+  <div class="sidebar sidebar-customer">
+      <div class="sidebar-brand">
+        🎂 SweetBake
+      </div>
+      <ul class="sidebar-menu">
+        <li class="sidebar-item">
+          <a href="/customer/dashboard" class="sidebar-link">Home</a>
+        </li>
+        <li class="sidebar-item">
+          <a href="/customer/orders" class="sidebar-link">My Orders</a>
+        </li>
+        <li class="sidebar-item">
+          <a href="/customer/checkout" class="sidebar-link">Checkout</a>
+        </li>
+        <li class="sidebar-item">
+          <a href="/logout" class="sidebar-link">Logout</a>
+        </li>
+      </ul>
+    </div>
+  <% } %>
+
+  <div class="main-content">
+    <h1 class="cake-emoji">Order #<%= order.id %></h1>
+    
+    <div class="card p-4 mb-4">
+      <h3 class="cake-emoji mb-3">Order Details</h3>
+      <div class="mb-2"><strong>👤 Customer:</strong> <%= order.customer_name %></div>
+      <div class="mb-2"><strong>₱ Total Amount:</strong> ₱<%= order.total_amount %></div>
+      <div class="mb-2"><strong>📊 Status:</strong> <%= order.status %></div>
+      <div class="mb-2"><strong>📅 Date:</strong> <%= order.created_at %></div>
+    </div>
+    
+    <div class="card p-4 mb-4">
+      <h3 class="cake-emoji mb-3">Items</h3>
+      <table class="table">
+        <thead class="table-primary">
+          <tr>
+            <th>🍰 Cake</th>
+            <th>📦 Quantity</th>
+            <th>₱ Price</th>
+            <th>₱ Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% items.forEach(item => { %>
+            <tr>
+              <td><%= item.cake_name %></td>
+              <td><%= item.quantity %></td>
+              <td>₱<%= item.price %></td>
+              <td>₱<%= (item.quantity * item.price).toFixed(2) %></td>
+            </tr>
+          <% }) %>
+          <tr class="table-info">
+            <td colspan="3" class="text-end"><strong>Total:</strong></td>
+            <td><strong>₱<%= order.total_amount %></strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <% if (payment) { %>
+      <div class="card p-4">
+        <h3 class="cake-emoji mb-3">💳 Payment</h3>
+        <div class="mb-2"><strong>Method:</strong> <%= payment.payment_method %></div>
+        <div class="mb-2"><strong>Status:</strong> <%= payment.payment_status %></div>
+        <% if (payment.proof_image) { %>
+          <div class="mt-2">
+            <img src="/uploads/<%= payment.proof_image %>" alt="Payment Proof" style="max-width:300px; border-radius:10px;">
+          </div>
+        <% } %>
+        <% if (user.role === 'customer' && !payment.proof_image) { %>
+          <form method="POST" action="/customer/payments/proof" enctype="multipart/form-data" class="mt-3">
+            <input type="hidden" name="order_id" value="<%= order.id %>">
+            <div class="mb-3">
+              <label for="proof_image" class="form-label">Upload Payment Proof</label>
+              <input type="file" class="form-control" id="proof_image" name="proof_image">
+            </div>
+            <button type="submit" class="btn btn-primary">Upload Proof</button>
+          </form>
+        <% } %>
+      </div>
+    <% } %>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
